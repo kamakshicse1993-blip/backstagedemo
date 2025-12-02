@@ -34,33 +34,29 @@ spec:
       input:
         url: ./template
         values:
-          app_name: ${{parameters.component_id}}
-          app_env: ${{parameters.environment}}
+          app_name: ${{ parameters.component_id }}
+          app_env: ${{ parameters.environment }}
 
     - id: publish
       name: Create PR in backstagedemo
       action: publish:github:pull-request
       input:
-      repoUrl: github.com?owner=kamakshicse1993-blip&repo=backstagedemo
-      branchName: add-${{ parameters.component_id }}
-      title: Add ${{ parameters.component_id }} service
-      description: >
-        Scaffolded Python Flask service for ${{ parameters.component_id }}
-        in environment ${{ parameters.environment }}.
-      sourcePath: ./
-      targetPath: services/${{ parameters.component_id }}
-      commitMessage: "Add ${{ parameters.component_id }} service scaffolded by Backstage"
-
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
-        catalogInfoPath: "/catalog-info.yaml"
+        # This must match the repo path: github.com/<owner>/<repo>
+        repoUrl: github.com?owner=kamakshicse1993-blip&repo=backstagedemo
+        branchName: add-${{ parameters.component_id }}
+        title: Add ${{ parameters.component_id }} service
+        description: >
+          Scaffolded Python Flask service for ${{ parameters.component_id }}
+          in environment ${{ parameters.environment }}.
+        # All generated files from fetch-base are in the workspace root
+        sourcePath: ./
+        # Where inside the repo the component will live
+        targetPath: services/${{ parameters.component_id }}
+        commitMessage: "Add ${{ parameters.component_id }} service scaffolded by Backstage"
 
   output:
     links:
       - title: Repository
         url: ${{ steps['publish'].output.remoteUrl }}
-
-
+      - title: Pull Request
+        url: ${{ steps['publish'].output.remoteUrl + '/pull/' + steps['publish'].output.pullRequestNumber }}
