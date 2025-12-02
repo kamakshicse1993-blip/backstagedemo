@@ -38,15 +38,18 @@ spec:
           app_env: ${{parameters.environment}}
 
     - id: publish
-      name: Publish
-      action: publish:github
+      name: Create PR in backstagedemo
+      action: publish:github:pull-request
       input:
-        allowedHosts:
-          - github.com
-        description: This is ${{ parameters.component_id }}
-        repoUrl: github.com?owner=ricardoandre-97&repo=${{parameters.component_id}}
-        protectDefaultBranch: false
-        repoVisibility: public
+      repoUrl: github.com?owner=kamakshicse1993-blip&repo=backstagedemo
+      branchName: add-${{ parameters.component_id }}
+      title: Add ${{ parameters.component_id }} service
+      description: >
+        Scaffolded Python Flask service for ${{ parameters.component_id }}
+        in environment ${{ parameters.environment }}.
+      sourcePath: ./
+      targetPath: services/${{ parameters.component_id }}
+      commitMessage: "Add ${{ parameters.component_id }} service scaffolded by Backstage"
 
     - id: register
       name: Register
@@ -59,4 +62,5 @@ spec:
     links:
       - title: Repository
         url: ${{ steps['publish'].output.remoteUrl }}
+
 
